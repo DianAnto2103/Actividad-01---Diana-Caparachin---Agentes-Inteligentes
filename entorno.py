@@ -75,20 +75,21 @@ class Agente:
     }
 
     """-----------LINEA3-------------
-    Este es un constructor: """
+    Este es un constructor: ... se define a nombre junto a valor predeterminado """
 
     def __init__(self, nombre="Agente"):
         self.nombre = nombre
 
     """-----------LINEA4-------------
-    se define el método decidir:  """
+    Se define el método decidir con parametro percepcion de tipo diccionario. El metodo debe retornar un string"""
 
     def decidir(self, percepcion: dict) -> str:
         """Sobreescribir este método.""" #comentario
         raise NotImplementedError("Debes implementar el método decidir()")
     
-    """"""
-
+    """-----------LINEA5-------------
+    Metodo para iniciar, no tiene parametros ni valores predeterminados. 
+    """
     def al_iniciar(self):
         """Opcional: se llama al comenzar la simulación."""
         pass
@@ -101,115 +102,136 @@ class Agente:
 class GridWorld:
     """Entorno de cuadrícula. Genera un mapa y ejecuta agentes."""
 
+    """-----------LINEA6------------
+    Se define el mapa, la cantidad de filas, columnas, semilla?, porcentaje de tamaño de pared. Es un constructor.
+    """
     def __init__(self, filas=10, columnas=10, semilla=42, porcentaje_paredes=0.20):
         self.filas = filas
         self.columnas = columnas
         self.semilla = semilla
 
-        self.inicio = (0, 0)
-        self.meta = (filas - 1, columnas - 1)
+        self.inicio = (0, 0) #Iniciamos en 0,0
+        self.meta = (filas - 1, columnas - 1) #La ultima casilla a la derecha
 
         # Generar mapa: 0 = libre, 1 = pared
-        self.mapa = self._generar_mapa(semilla, porcentaje_paredes)
+        self.mapa = self._generar_mapa(semilla, porcentaje_paredes) #Aqui se define el mapa
+
+
+    """-----------LINEA7------------
+    Se genera el mapa teniendo como parametro la semilla (mapa "aleatorio") y el porcentaje de paredes que se desea. 
+    """
 
     def _generar_mapa(self, semilla, pct_paredes):
-        rng = random.Random(semilla)
-        mapa = [[0] * self.columnas for _ in range(self.filas)]
+        rng = random.Random(semilla) #un mapa random [no tan determinista y reproducible porque utiliza la misma secuencia de números]
+        mapa = [[0] * self.columnas for _ in range(self.filas)] #Una matriz de 0 con las columnas definidas y filas definidas
 
         # Proteger camino en L (fila 0 → columna final)
-        protegidas = set()
-        protegidas.add(self.inicio)
-        protegidas.add(self.meta)
+        protegidas = set() #protegidas = conjunto (sin repetición)
+        protegidas.add(self.inicio) #1 protegida es el inicio (0,0) no habrá pared ahí
+        protegidas.add(self.meta) #otra protegida es la meta (9,9) no habrá pared ahí 
         for c in range(self.columnas):
-            protegidas.add((0, c))
+            protegidas.add((0, c)) #protege toda la fila 0 hasta la columna de 0 a 9
         for r in range(self.filas):
-            protegidas.add((r, self.columnas - 1))
+            protegidas.add((r, self.columnas - 1)) #protege toda la fila de 0 a 9 de la columna "final"
 
         # Colocar paredes
         celdas = [
-            (r, c) for r in range(self.filas) for c in range(self.columnas)
-            if (r, c) not in protegidas
+            (r, c) for r in range(self.filas) for c in range(self.columnas) #recorrer todo el conjunto de filas y celdas
+            if (r, c) not in protegidas #si las casillas (r,c) no esta esta protegida, agregar al array: celda
         ]
-        rng.shuffle(celdas)
-        n_paredes = int(self.filas * self.columnas * pct_paredes)
-        for r, c in celdas[:n_paredes]:
-            mapa[r][c] = 1
+        rng.shuffle(celdas) #seleccionar celdas aleatorias
+        n_paredes = int(self.filas * self.columnas * pct_paredes) 
+        """
+        numero de paredes que habrán = cantidad de filas * cantidad de columnas * % de paredes (definido)
+        """
+        for r, c in celdas[:n_paredes]: #tomar de la LISTA (r,c) los primeros [cantidad de paredes] (ejm:5)[los primeros 5 DE LA LISTA (r,c)]
+            mapa[r][c] = 1 #las paredes son 1
+        return mapa #se retorna mapa al final del todo, es decir: mapa = [fila,columna]
 
-        return mapa
+    """-----------LINEA8------------
+    Se genera el método percepción que contiene el parametro posición:
+    """
 
-    def _percepcion(self, pos):
+    def _percepcion(self, pos): #se define el diccionario percepción
         """Genera el diccionario de percepción para una posición."""
-        r, c = pos
-        p = {'posicion': pos}
-
-        nombres = {
-            'arriba':    (-1, 0),
+        r, c = pos #(fila, columna) = pos
+        p = {'posicion': pos} # aqui se crea el diccionario (asi se crea en python)
+        """
+        Basicamente: p = diccionario => posicion; en el cual se guardan la posicion donde se encuentra actualmente
+        """
+        nombres = { #se genera un diccionario de nombres; antes era el diccionario posicion 
+            'arriba':    (-1, 0), 
             'abajo':     ( 1, 0),
             'izquierda': ( 0,-1),
             'derecha':   ( 0, 1),
         }
 
-        for nombre, (dr, dc) in nombres.items():
-            nr, nc = r + dr, c + dc
+        """guarda la clave (arriba,abajo,izquierda,derecha) 
+        en nombre y los valores (-1,0) [etc] en (dr,dc): """
+
+        for nombre, (dr, dc) in nombres.items(): 
+            nr, nc = r + dr, c + dc #nr, nc [nuevas variables] = r [fila] + dr[fila], c[columna] + dc[columna]
             if not (0 <= nr < self.filas and 0 <= nc < self.columnas):
-                p[nombre] = None
-            elif (nr, nc) == self.meta:
+                """None es vacio, es decir, despues del borde. Si nr [fila] no es mayor o igual a 0
+                y no es menor que la cantidad de filas [es decir, en este caso 10] y lo mismo con columa, se tiene: None."""
+                p[nombre] = None 
+            elif (nr, nc) == self.meta: #en este caso (9,9)
                 p[nombre] = 'meta'
-            elif self.mapa[nr][nc] == 1:
+            elif self.mapa[nr][nc] == 1: #si encuentra una parea [un 1]
                 p[nombre] = 'pared'
-            else:
+            else: #si no encuentra ni pared ni meta es libre
                 p[nombre] = 'libre'
 
-        # Dirección general a la meta
-        gr, gc = self.meta
-        vert = 'arriba' if gr < r else ('abajo' if gr > r else 'ninguna')
+        # Dirección general a la meta. Aquí se define meta:
+        gr, gc = self.meta #gr = 9; gc=9 [en este caso]
+        vert = 'arriba' if gr < r else ('abajo' if gr > r else 'ninguna') 
         horiz = 'izquierda' if gc < c else ('derecha' if gc > c else 'ninguna')
-        p['direccion_meta'] = (vert, horiz)
+        p['direccion_meta'] = (vert, horiz) #añade al diccionario -> direccion_meta = (vertical, horizontal)
 
-        return p
+        return p #retornamos el diccionario
 
     # ─────────────────────────────────────────────
-    #  Ejecución (sin animación, para métricas)
+    #  Ejecución (sin animación, para métricas) 
     # ─────────────────────────────────────────────
 
     def ejecutar(self, agente, max_pasos=300):
         """Ejecuta el agente y retorna resultados."""
         agente.al_iniciar()
-        pos = self.inicio
-        camino = [pos]
-        visitadas = {pos}
+        pos = self.inicio #(0,0)
+        camino = [pos] #se guarda todos los caminos tomados en un array
+        visitadas = {pos} #se guarda las celdas UNICAS visitadas (sin repetición)
 
         for paso in range(1, max_pasos + 1):
-            percepcion = self._percepcion(pos)
-            accion = agente.decidir(percepcion)
+            percepcion = self._percepcion(pos) #empezando con la posicion 0,0 -> percepcion
+            accion = agente.decidir(percepcion) #le da la percepción. SI es inicial -> (0,0)
 
             if accion not in Agente.ACCIONES:
                 accion = 'abajo'
 
-            dr, dc = Agente.DELTAS[accion]
-            nr, nc = pos[0] + dr, pos[1] + dc
+            dr, dc = Agente.DELTAS[accion] #convierte accion en coordenadas (capta los valores) y coloca en dr,dc
+            nr, nc = pos[0] + dr, pos[1] + dc #aqui cambia nr y nc, es decir, la posición siguiente. pos[0] -> fila, pos[1] -> columna
 
             # Validar movimiento
             if (0 <= nr < self.filas and 0 <= nc < self.columnas
                     and self.mapa[nr][nc] != 1):
-                pos = (nr, nc)
+                pos = (nr, nc) #cambia la posicion si pasa todas las condiciones!
 
-            camino.append(pos)
-            visitadas.add(pos)
+            camino.append(pos) #se agrega un camino
+            visitadas.add(pos) #se agrega las visitadas (sin repetición)
 
-            if pos == self.meta:
+            if pos == self.meta: #si el conjunto es meta: 
                 return {
                     'camino': camino, 'pasos': paso,
                     'llego': True, 'celdas_visitadas': len(visitadas)
                 }
 
-        return {
+        return { #si no llega en los pasos deseados
             'camino': camino, 'pasos': max_pasos,
             'llego': False, 'celdas_visitadas': len(visitadas)
         }
 
     # ─────────────────────────────────────────────
-    #  Animación
+    #  Animación [Parte visual]
     # ─────────────────────────────────────────────
 
     def animar(self, agente, max_pasos=300, velocidad=0.15):

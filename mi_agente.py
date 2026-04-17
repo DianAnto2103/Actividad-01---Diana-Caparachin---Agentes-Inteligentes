@@ -35,6 +35,7 @@ fuera del mapa), simplemente se queda en su lugar.
 """
 
 from entorno import Agente
+import random
 
 
 class MiAgente(Agente):
@@ -49,8 +50,9 @@ class MiAgente(Agente):
         super().__init__(nombre="Mi Agente")
         # Puedes agregar atributos aquí si los necesitas.
         # Ejemplo:
-        #   self.pasos = 0
-        #   self.memoria = {}
+        self.pasos = 0
+        self.memoria = {"":""}
+
 
     def al_iniciar(self):
         """Se llama una vez al iniciar la simulación. Opcional."""
@@ -67,26 +69,29 @@ class MiAgente(Agente):
         Retorna:
             'arriba', 'abajo', 'izquierda' o 'derecha'
         """
-        # ╔══════════════════════════════════════╗
-        # ║   ESCRIBE TU LÓGICA AQUÍ             ║
-        # ╚══════════════════════════════════════╝
+        vertical,horizontal = percepcion["direccion_meta"]
 
-        # Ejemplo básico (bórralo y escribe tu propia lógica):
-        #
-        # vert, horiz = percepcion['direccion_meta']
-        #
-        # if percepcion[vert] == 'libre' or percepcion[vert] == 'meta':
-        #     return vert
-        # if percepcion[horiz] == 'libre' or percepcion[horiz] == 'meta':
-        #     return horiz
-        #
-        # return 'abajo'
-        print('Hola decidir')
-        for direccion in self.ACCIONES:
-            celda = percepcion[direccion]
-            if celda == 'meta':
-                return direccion
-            if celda == 'libre':
-                return direccion
+        if(self.memoria[pasos]):
+            if(vertical != "ninguna"):
+                celda = percepcion[vertical]
+                if celda == "libre" or celda == "meta":
+                    self.memoria[vertical] = celda
+                    pasos+=1
+                    return vertical
+            
 
-        return 'abajo'  # ← Reemplazar con tu lógica
+        if(horizontal != "ninguna"):
+            celda = percepcion[horizontal]
+            if celda == "libre" or celda == "meta":
+                pasos+=1
+                return horizontal
+            
+
+        random.shuffle(self.ACCIONES)    
+        for i in self.ACCIONES:
+            celda = percepcion[i]
+            if celda == "libre" or celda == "meta":
+                return i
+                
+
+
