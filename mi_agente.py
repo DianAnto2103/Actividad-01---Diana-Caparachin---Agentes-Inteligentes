@@ -50,8 +50,9 @@ class MiAgente(Agente):
         super().__init__(nombre="Mi Agente")
         # Puedes agregar atributos aquí si los necesitas.
         # Ejemplo:
-        self.visitadas = set()
-        self.utima_posicion = None
+        self.pasos = 0
+        self.visitados = set()
+        self.ultima_posicion = None 
 
 
     def al_iniciar(self):
@@ -74,20 +75,25 @@ class MiAgente(Agente):
         #Aqui lo que se hace es guardar la posición actual, en este caso: (0,0)
         pos_actual = percepcion['posicion'] #pos_actual = (0,0) [inicial]
 
+        #ACTUALIZAMOS MEMORIA
         self.visitados.add(pos_actual) #agregar en los visitados
-
         self.pasos += 1 #aumentar pasos
+        vertical,horizontal = percepcion["direccion_meta"] #vertical, horizontal tendrán la dirección meta -> (abajo, derecha)
 
+        #INICIAMOS UTILIDAD
         utilidad = {'arriba': 0, 'abajo': 0, 'izquierda': 0, 'derecha': 0} #Calcular utilidad.
 
 
-        vertical,horizontal = percepcion["direccion_meta"] #vertical, horizontal tendrán la dirección meta -> (abajo, derecha)
-
         for direccion in self.ACCIONES:
-            estado = percepcion[direccion] #estado = libre, meta, pared, none; depende de si direccion
+            estado = percepcion[direccion] #estado = libre, meta, pared, none; depende de direccion
+            dr, dc = self.DELTAS[direccion] # guardamos los deltas correspondientes a direccion(arriba, abajo, iz, derecha)
+            r,c = pos_actual #guardamos pos_actual en r,c. Ejmplo: (0,0)
+            nueva_posicion = (dr+r, dc+c) #Calculamos la nueva posición correspondiente a la suma de pos actual con el movimiento realizado
 
-            if estado == 'meta':
-                utilidad
+        return 'abajo'
+            
+            
+
                 
 
 
