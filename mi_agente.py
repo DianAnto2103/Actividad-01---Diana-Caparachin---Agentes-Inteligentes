@@ -50,16 +50,17 @@ class MiAgente(Agente):
         super().__init__(nombre="Mi Agente")
         # Puedes agregar atributos aquí si los necesitas.
         # Ejemplo:
-        self.pasos = 0
-        self.memoria = {"":""}
+        self.visitadas = set()
+        self.utima_posicion = None
 
 
     def al_iniciar(self):
         """Se llama una vez al iniciar la simulación. Opcional."""
-        pass
+        self.pasos = 0
+        self.visitados.clear()
+        self.ultima_posicion = None
 
-    def decidir(self, percepcion):
-        
+    def decidir(self, percepcion):  
         """
         Decide la siguiente acción del agente.
         
@@ -69,29 +70,24 @@ class MiAgente(Agente):
         Retorna:
             'arriba', 'abajo', 'izquierda' o 'derecha'
         """
-        vertical,horizontal = percepcion["direccion_meta"]
 
-        if(self.memoria[pasos]):
-            if(vertical != "ninguna"):
-                celda = percepcion[vertical]
-                if celda == "libre" or celda == "meta":
-                    self.memoria[vertical] = celda
-                    pasos+=1
-                    return vertical
-            
+        #Aqui lo que se hace es guardar la posición actual, en este caso: (0,0)
+        pos_actual = percepcion['posicion'] #pos_actual = (0,0) [inicial]
 
-        if(horizontal != "ninguna"):
-            celda = percepcion[horizontal]
-            if celda == "libre" or celda == "meta":
-                pasos+=1
-                return horizontal
-            
+        self.visitados.add(pos_actual) #agregar en los visitados
 
-        random.shuffle(self.ACCIONES)    
-        for i in self.ACCIONES:
-            celda = percepcion[i]
-            if celda == "libre" or celda == "meta":
-                return i
+        self.pasos += 1 #aumentar pasos
+
+        utilidad = {'arriba': 0, 'abajo': 0, 'izquierda': 0, 'derecha': 0} #Calcular utilidad.
+
+
+        vertical,horizontal = percepcion["direccion_meta"] #vertical, horizontal tendrán la dirección meta -> (abajo, derecha)
+
+        for direccion in self.ACCIONES:
+            estado = percepcion[direccion] #estado = libre, meta, pared, none; depende de si direccion
+
+            if estado == 'meta':
+                utilidad
                 
 
 
