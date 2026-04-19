@@ -90,6 +90,26 @@ class MiAgente(Agente):
             r,c = pos_actual #guardamos pos_actual en r,c. Ejmplo: (0,0)
             nueva_posicion = (dr+r, dc+c) #Calculamos la nueva posición correspondiente a la suma de pos actual con el movimiento realizado
 
+            #Definimos la utilidad dependiendo del estado de las acciones
+            if estado == 'libre': 
+                utilidad[direccion] = 100
+            if estado == 'meta':
+                utilidad[direccion] = 1000
+            if estado == 'pared' or estado == None:
+                utilidad[direccion] = -100
+
+            #Definimos utilidad para la brújula definida -> direccion_meta
+            if vertical != 'ninguna' and direccion == vertical:
+                utilidad[direccion] += 70
+            if horizontal != 'ninguna' and direccion == horizontal:
+                utilidad[direccion] +=70
+
+            #Definimos utilidad cuando se encuentre celdas ya visitadas con anterioridad
+            if nueva_posicion in self.visitados:
+                utilidad[direccion] -=50
+            
+            
+
         return 'abajo'
             
             
