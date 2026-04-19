@@ -11,7 +11,7 @@ class AgenteBModelo(Agente):
 
 
     def al_iniciar(self):
-        pass
+        self.celdas_visitadas.clear()
 
     def decidir(self, percepcion):
         celda_actual = percepcion['posicion']

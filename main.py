@@ -13,6 +13,7 @@ from agente_utilidad import MiAgente
 from agente_reactivo import AgenteReactivo
 from agente_modelos import AgenteBModelo
 from agente_objetivos import AgenteBObjetivos
+from agente_alter import AgenteAlter
 
 # ── Configuración del mapa ───────────────────────
 FILAS     = 10      # Alto del mapa
@@ -35,7 +36,7 @@ mundo = GridWorld(
 mundo.mostrar_mapa()
 
 # Crear tu agente
-agente = AgenteBObjetivos()
+agente = AgenteAlter()
 
 # Ejecutar con animación
 resultado = mundo.animar(agente, max_pasos=MAX_PASOS, velocidad=VELOCIDAD)

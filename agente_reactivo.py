@@ -15,8 +15,8 @@ class AgenteReactivo(Agente):
         pass
 
     def decidir(self, percepcion):
-        estado = percepcion[direccion]
         for direccion in self.ACCIONES:
+            estado = percepcion[direccion]
             if(estado == 'libre' or estado == 'meta'):
                 return direccion
             else:
