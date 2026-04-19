@@ -107,10 +107,15 @@ class MiAgente(Agente):
             #Definimos utilidad cuando se encuentre celdas ya visitadas con anterioridad
             if nueva_posicion in self.visitados:
                 utilidad[direccion] -=50
-            
-            
 
-        return 'abajo'
+            #Evitamos la celda anterior (es decir, nunca posición actual)
+            if nueva_posicion == self.ultima_posicion:
+                utilidad[direccion] -= 80
+            
+        mejor_camino = max(utilidad, key=utilidad.get)
+        self.ultima_posicion = pos_actual
+
+        return mejor_camino
             
             
 
