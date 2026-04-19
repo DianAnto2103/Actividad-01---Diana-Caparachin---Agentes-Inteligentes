@@ -14,11 +14,12 @@ from agente_reactivo import AgenteReactivo
 from agente_modelos import AgenteBModelo
 from agente_objetivos import AgenteBObjetivos
 from agente_alter import AgenteAlter
+import random
 
 # ── Configuración del mapa ───────────────────────
 FILAS     = 10      # Alto del mapa
 COLUMNAS  = 10       # Ancho del mapa
-SEMILLA   = 42       # Cambiar para generar otro mapa
+SEMILLA   = random.randint(0,9999)      # Cambiar para generar otro mapa
 PAREDES   = 0.20   # Porcentaje de paredes (0.0 a 0.40)
 VELOCIDAD = 0.15     # Segundos entre pasos (menor = más rápido)
 MAX_PASOS = 50      # Máximo de pasos antes de rendirse
