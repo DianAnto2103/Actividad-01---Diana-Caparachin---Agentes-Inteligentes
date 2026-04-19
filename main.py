@@ -9,13 +9,16 @@ Configuración:
 """
 
 from entorno import GridWorld
-from mi_agente import MiAgente
+from agente_utilidad import MiAgente
+from agente_reactivo import AgenteReactivo
+from agente_modelos import AgenteBModelo
+from agente_objetivos import AgenteBObjetivos
 
 # ── Configuración del mapa ───────────────────────
-FILAS     = 10       # Alto del mapa
+FILAS     = 10      # Alto del mapa
 COLUMNAS  = 10       # Ancho del mapa
-SEMILLA   = 42       # Cambiar para generar otro mapa
-PAREDES   = 0.20     # Porcentaje de paredes (0.0 a 0.40)
+SEMILLA   = 40       # Cambiar para generar otro mapa
+PAREDES   = 0.40    # Porcentaje de paredes (0.0 a 0.40)
 VELOCIDAD = 0.15     # Segundos entre pasos (menor = más rápido)
 MAX_PASOS = 50      # Máximo de pasos antes de rendirse
 # ─────────────────────────────────────────────────
@@ -32,7 +35,7 @@ mundo = GridWorld(
 mundo.mostrar_mapa()
 
 # Crear tu agente
-agente = MiAgente()
+agente = AgenteBObjetivos()
 
 # Ejecutar con animación
 resultado = mundo.animar(agente, max_pasos=MAX_PASOS, velocidad=VELOCIDAD)

@@ -47,7 +47,7 @@ class MiAgente(Agente):
     """
 
     def __init__(self):
-        super().__init__(nombre="Mi Agente")
+        super().__init__(nombre="Agente Basado en Utilidad")
         # Puedes agregar atributos aquí si los necesitas.
         # Ejemplo:
         self.pasos = 0
@@ -92,25 +92,25 @@ class MiAgente(Agente):
 
             #Definimos la utilidad dependiendo del estado de las acciones
             if estado == 'libre': 
-                utilidad[direccion] = 100
+                utilidad[direccion] = 100 # Base: moverse cuesta 1 paso
             if estado == 'meta':
-                utilidad[direccion] = 1000
+                utilidad[direccion] = 10000 # Llegar = 0 pasos restantes
             if estado == 'pared' or estado == None:
-                utilidad[direccion] = -100
+                utilidad[direccion] = -100 # Imposible = infinitos pasos
 
             #Definimos utilidad para la brújula definida -> direccion_meta
             if vertical != 'ninguna' and direccion == vertical:
-                utilidad[direccion] += 70
+                utilidad[direccion] += 70 # Bonus por ir hacia meta = ahorra 70 pasos
             if horizontal != 'ninguna' and direccion == horizontal:
-                utilidad[direccion] +=70
+                utilidad[direccion] +=70 # Bonus por ir hacia meta = ahorra 70 pasos
 
             #Definimos utilidad cuando se encuentre celdas ya visitadas con anterioridad
             if nueva_posicion in self.visitados:
-                utilidad[direccion] -=50
+                utilidad[direccion] -=50 #Penalización por visitado = desperdicia 50 pasos
 
             #Evitamos la celda anterior (es decir, nunca posición actual)
             if nueva_posicion == self.ultima_posicion:
-                utilidad[direccion] -= 80
+                utilidad[direccion] -= 80 #Penalización por retroceder = desperdicia 80 pasos
             
         mejor_camino = max(utilidad, key=utilidad.get)
         self.ultima_posicion = pos_actual
